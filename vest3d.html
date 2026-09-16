@@ -71,14 +71,8 @@ html, body {
 </style>
 
 <!-- Import map for bare specifiers -->
-<script type="importmap">
-{
-  "imports": {
-    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
-  }
-}
-</script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.min.js"></script>
 </head>
 <body>
 
@@ -138,9 +132,8 @@ window.addEventListener('unhandledrejection', function(e) {
 });
 </script>
 
-<script type="module">
-import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+<script>
+// THREE and THREE.OrbitControls are globals from the CDN scripts above.
 
 // ── State ──────────────────────────────────────────────────
 const state = {
@@ -360,8 +353,10 @@ key.shadow.camera.near = 0.5; key.shadow.camera.far = 20;
 key.shadow.camera.left = -3; key.shadow.camera.right = 3;
 key.shadow.camera.top = 3; key.shadow.camera.bottom = -3;
 scene.add(key);
-scene.add(Object.assign(new THREE.DirectionalLight(0xc8d8ff, 0.6), { position: new THREE.Vector3(-3, 1, 2) }));
-scene.add(Object.assign(new THREE.DirectionalLight(0xffd580, 0.4), { position: new THREE.Vector3(0, -2, -3) }));
+const fill1 = new THREE.DirectionalLight(0xc8d8ff, 0.6);
+fill1.position.set(-3, 1, 2); scene.add(fill1);
+const fill2 = new THREE.DirectionalLight(0xffd580, 0.4);
+fill2.position.set(0, -2, -3); scene.add(fill2);
 
 const groundGeo = new THREE.PlaneGeometry(20, 20);
 const groundMat = new THREE.ShadowMaterial({ opacity: 0.25 });
