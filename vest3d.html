@@ -160,43 +160,54 @@ function dispose(group) {
 // ── Torso ────────────────────────────────────────────────
 function buildTorso() {
   const g = new THREE.Group();
-  const shape = new THREE.Shape();
-  const w = 1.2, h = 1.7, armW = 0.38, armH = 0.72;
 
-  if (state.cut === 'classic') {
-    shape.moveTo(-w/2, 0);
-    shape.lineTo(-w/2, h - armH);
-    shape.bezierCurveTo(-w/2+armW, h-armH, -w/2+armW+0.1, h-armH+0.08, -w/2+armW+0.18, h);
-    shape.lineTo(-0.12, 0);
-    shape.lineTo(0.12, 0);
-    shape.lineTo(w/2-armW-0.18, h);
-    shape.bezierCurveTo(w/2-armW-0.1, h-armH+0.08, w/2-armW, h-armH, w/2, 0);
-  } else if (state.cut === 'racer') {
-    shape.moveTo(-w/2, 0);
-    shape.lineTo(-w/2+0.08, h-0.05);
-    shape.bezierCurveTo(-0.3, h+0.05, 0.3, h+0.05, w/2-0.08, h-0.05);
-    shape.lineTo(w/2, 0);
-    shape.lineTo(0.12, 0);
-    shape.lineTo(-0.12, 0);
+  if (state.cut === 'racer') {
+    // Slim racer back panel
+    const panel = new THREE.Mesh(new THREE.BoxGeometry(1.08, 1.62, 0.10), bodyMat);
+    panel.position.set(0, 0.06, 0); panel.castShadow = true; panel.receiveShadow = true;
+    g.add(panel);
+    // Racer shoulder straps (narrow, angled)
+    [-0.42, 0.42].forEach(x => {
+      const strap = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.22, 0.09), bodyMat);
+      strap.position.set(x, 0.82, 0.01);
+      strap.rotation.z = x > 0 ? -0.18 : 0.18;
+      strap.castShadow = true; g.add(strap);
+    });
+  } else if (state.cut === 'field') {
+    // Field vest — boxier, longer, epaulettes
+    const body = new THREE.Mesh(new THREE.BoxGeometry(1.18, 1.72, 0.12), bodyMat);
+    body.position.set(0, 0.05, 0); body.castShadow = true; body.receiveShadow = true;
+    g.add(body);
+    // Epaulettes
+    [-0.54, 0.54].forEach(x => {
+      const ep = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.12, 0.10), bodyMat);
+      ep.position.set(x, 0.84, 0.02); ep.rotation.z = x > 0 ? -0.1 : 0.1;
+      ep.castShadow = true; g.add(ep);
+    });
   } else {
-    shape.moveTo(-w/2, 0);
-    shape.lineTo(-w/2, h - armH + 0.15);
-    shape.bezierCurveTo(-w/2+0.1, h-armH+0.15, -w/2+0.15, h-armH+0.1, -w/2+0.2, h-armH+0.22);
-    shape.lineTo(-0.12, 0);
-    shape.lineTo(0.12, 0);
-    shape.lineTo(w/2-0.2, h-armH+0.22);
-    shape.bezierCurveTo(w/2-0.15, h-armH+0.1, w/2-0.1, h-armH+0.15, w/2, 0);
+    // Classic cut — main body + arm flares
+    const body = new THREE.Mesh(new THREE.BoxGeometry(1.1, 1.65, 0.11), bodyMat);
+    body.position.set(0, 0.05, 0); body.castShadow = true; body.receiveShadow = true;
+    g.add(body);
+    // Arm holes cut visually — small side panels
+    [-0.58, 0.58].forEach(x => {
+      const side = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.55, 0.10), bodyMat);
+      side.position.set(x, 0.4, 0); side.castShadow = true; g.add(side);
+    });
   }
 
-  const extSettings = {
-    steps: 1, depth: 0.12,
-    bevelEnabled: true, bevelThickness: 0.012, bevelSize: 0.01, bevelSegments: 3,
-  };
-  const geo = new THREE.ExtrudeGeometry(shape, extSettings);
-  geo.center();
-  const m = new THREE.Mesh(geo, bodyMat);
-  m.castShadow = true; m.receiveShadow = true;
-  g.add(m);
+  // Front panels (slightly separated to show closure gap)
+  [-0.28, 0.28].forEach(x => {
+    const panel = new THREE.Mesh(new THREE.BoxGeometry(0.48, 1.58, 0.09), bodyMat);
+    panel.position.set(x, 0.05, 0.06);
+    panel.castShadow = true; panel.receiveShadow = true;
+    g.add(panel);
+  });
+
+  // Bottom hem
+  const hem = new THREE.Mesh(new THREE.BoxGeometry(1.14, 0.06, 0.12), bodyMat);
+  hem.position.set(0, -0.76, 0); hem.castShadow = true; g.add(hem);
+
   return g;
 }
 
