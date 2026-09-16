@@ -1,102 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DEAD LETTERS — 3D VEST BUILDER</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body {
-      width: 100%; height: 100%;
-      background: #0a0a0a;
-      overflow: hidden;
-      font-family: 'Courier New', monospace;
-    }
-    #c {
-      display: block;
-      width: 100vw;
-      height: 100vh;
-    }
-    #hud {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      padding: 1.2rem 2rem;
-      background: linear-gradient(180deg, rgba(10,10,10,0.92) 0%, transparent 100%);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      pointer-events: none;
-      z-index: 10;
-    }
-    #hud .brand {
-      color: #c8b89a;
-      font-size: 1.1rem;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      font-weight: 700;
-    }
-    #hud .sub {
-      color: rgba(200,184,154,0.45);
-      font-size: 0.65rem;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      margin-top: 2px;
-    }
-    #ctrl {
-      position: fixed;
-      bottom: 0; left: 0; right: 0;
-      background: linear-gradient(0deg, rgba(10,10,10,0.95) 0%, transparent 100%);
-      padding: 2rem 2rem 1.5rem;
-      display: flex;
-      gap: 0.6rem;
-      justify-content: center;
-      flex-wrap: wrap;
-      z-index: 10;
-    }
-    .btn {
-      background: transparent;
-      border: 1px solid rgba(200,184,154,0.3);
-      color: rgba(200,184,154,0.7);
-      padding: 0.5rem 1.2rem;
-      font-family: 'Courier New', monospace;
-      font-size: 0.7rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: all 0.2s;
-      min-width: 100px;
-    }
-    .btn:hover, .btn.active {
-      border-color: rgba(200,184,154,0.85);
-      color: #c8b89a;
-      background: rgba(200,184,154,0.06);
-    }
-    .btn-color {
-      width: 32px; height: 32px;
-      min-width: 32px;
-      border-radius: 50%;
-      padding: 0;
-      border-color: rgba(255,255,255,0.15);
-    }
-    .btn-color.active { border-color: #c8b89a; border-width: 2px; }
-    #swatches {
-      display: flex;
-      gap: 0.5rem;
-      align-items: center;
-    }
-    #label {
-      position: fixed;
-      bottom: 6rem;
-      left: 50%;
-      transform: translateX(-50%);
-      color: rgba(200,184,154,0.35);
-      font-size: 0.6rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      pointer-events: none;
-      z-index: 10;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DEAD LETTERS — 3D VEST BUILDER</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body {
+  width: 100%; height: 100%;
+  background: #0a0a0a;
+  overflow: hidden;
+  font-family: 'Courier New', monospace;
+}
+#c {
+  display: block;
+  width: 100vw; height: 100vh;
+}
+#hud {
+  position: fixed;
+  top: 24px; left: 0; right: 0;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 10;
+}
+#hud > div {
+  text-align: center;
+  background: rgba(0,0,0,0.65);
+  border: 1px solid rgba(200,184,154,0.25);
+  padding: 12px 28px;
+  letter-spacing: 0.18em;
+}
+.brand {
+  color: #c8b89a;
+  font-size: 1.4rem;
+  font-weight: bold;
+  text-shadow: 0 0 18px rgba(200,184,154,0.4);
+}
+.sub {
+  color: rgba(200,184,154,0.55);
+  font-size: 0.65rem;
+  margin-top: 4px;
+  letter-spacing: 0.12em;
+}
+#label {
+  position: fixed;
+  bottom: 100px; left: 0; right: 0;
+  text-align: center;
+  color: rgba(200,184,154,0.3);
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  pointer-events: none;
+  z-index: 10;
+}
+#ctrl {
+  position: fixed;
+  bottom: 24px; left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0,0,0,0.7);
+  border: 1px solid rgba(200,184,154,0.2);
+  padding: 10px 16px;
+  z-index: 10;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 95vw;
+}
+.btn {
+  background: rgba(200,184,154,0.08);
+  border: 1px solid rgba(200,184,154,0.3);
+  color: rgba(200,184,154,0.8);
+  padding: 5px 11px;
+  font-size: 0.6rem;
+  cursor: pointer;
+  letter-spacing: 0.08em;
+  font-family: 'Courier New', monospace;
+  transition: background 0.15s;
+}
+.btn:hover { background: rgba(200,184,154,0.18); }
+.btn.active {
+  background: rgba(200,184,154,0.22);
+  border-color: rgba(200,184,154,0.7);
+  color: #c8b89a;
+}
+.btn-color {
+  width: 26px; height: 26px;
+  padding: 0;
+  border-radius: 50%;
+  cursor: pointer;
+}
+#swatches { display: flex; gap: 6px; align-items: center; }
+#error-msg {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  color: #c8b89a;
+  font-size: 0.8rem;
+  text-align: center;
+  z-index: 20;
+  display: none;
+}
+</style>
 </head>
 <body>
 
@@ -118,23 +124,44 @@
     <div id="s-oxblood" class="btn btn-color"        style="background:#4a0f0f;" title="Oxblood"></div>
     <div id="s-tan"    class="btn btn-color"         style="background:#8c5a2e;" title="Tan"></div>
   </div>
-  <div style="width:1px;background:rgba(200,184,154,0.2);margin:0 0.3rem;"></div>
+  <div style="width:1px;height:20px;background:rgba(200,184,154,0.2);"></div>
   <button class="btn active" data-cut="classic">Classic</button>
   <button class="btn" data-cut="racer">Racer</button>
   <button class="btn" data-cut="field">Field</button>
-  <div style="width:1px;background:rgba(200,184,154,0.2);margin:0 0.3rem;"></div>
+  <div style="width:1px;height:20px;background:rgba(200,184,154,0.2);"></div>
   <button class="btn active" data-closure="zip">Zip</button>
   <button class="btn" data-closure="button">Button</button>
   <button class="btn" data-closure="snap">Snap</button>
-  <div style="width:1px;background:rgba(200,184,154,0.2);margin:0 0.3rem;"></div>
+  <div style="width:1px;height:20px;background:rgba(200,184,154,0.2);"></div>
   <button class="btn active" data-collar="notch">Notch</button>
   <button class="btn" data-collar="shawl">Shawl</button>
   <button class="btn" data-collar="flat">Flat</button>
-  <div style="width:1px;background:rgba(200,184,154,0.2);margin:0 0.3rem;"></div>
-  <button class="btn active" data-braid="single">Single Braid</button>
-  <button class="btn" data-braid="double">Double Braid</button>
-  <button class="btn" data-braid="none">No Braid</button>
+  <div style="width:1px;height:20px;background:rgba(200,184,154,0.2);"></div>
+  <button class="btn active" data-braid="single">Single</button>
+  <button class="btn" data-braid="double">Double</button>
+  <button class="btn" data-braid="none">None</button>
 </div>
+
+<div id="error-msg">
+  <div>WebGL failed to initialize</div>
+  <div id="error-detail" style="margin-top:8px;font-size:0.6rem;color:rgba(200,184,154,0.5);"></div>
+</div>
+
+<script>
+window.addEventListener('error', function(e) {
+  var el = document.getElementById('error-msg');
+  var detail = document.getElementById('error-detail');
+  if (el) { el.style.display = 'block'; }
+  if (detail && e.error) { detail.textContent = e.error.message || String(e.error); }
+});
+
+window.addEventListener('unhandledrejection', function(e) {
+  var el = document.getElementById('error-msg');
+  var detail = document.getElementById('error-detail');
+  if (el) { el.style.display = 'block'; }
+  if (detail) { detail.textContent = 'Unhandled promise rejection: ' + (e.reason && e.reason.message ? e.reason.message : String(e.reason)); }
+});
+</script>
 
 <script type="module">
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
@@ -160,22 +187,13 @@ function mkMat(hex) {
 function mkMetal(hex) {
   return new THREE.MeshStandardMaterial({ color: hex, roughness: 0.2, metalness: 0.95 });
 }
-function mkStitch() {
-  return new THREE.LineBasicMaterial({ color: 0x9a7a5a });
-}
-
-function refreshMaterials() {
-  const c = state.color;
-  bodyMat    = mkMat(c);
-  collarMat  = mkMat(c);
-  closureMat = mkMetal(METAL[state.closure] ?? 0xc9a84c);
-}
 
 // ── Geometry helpers ──────────────────────────────────────
 function dispose(group) {
   group.traverse(o => { if (o.geometry) o.geometry.dispose(); });
 }
 
+// ── Vest body ────────────────────────────────────────────
 function buildTorso() {
   const g = new THREE.Group();
   const shape = new THREE.Shape();
@@ -188,141 +206,188 @@ function buildTorso() {
     shape.lineTo(-0.12, 0);
     shape.lineTo(0.12, 0);
     shape.lineTo(w/2-armW-0.18, h);
-    shape.bezierCurveTo(w/2-armW-0.1, h-armH+0.08, w/2-armW, h-armH, w/2, h-armH);
-    shape.lineTo(w/2, 0);
-    shape.lineTo(-w/2, 0);
+    shape.bezierCurveTo(w/2-armW-0.1, h-armH+0.08, w/2-armW, h-armH, w/2, 0);
   } else if (state.cut === 'racer') {
-    shape.moveTo(-w/2+0.1, 0);
-    shape.lineTo(-w/2+0.1, h-armH-0.15);
-    shape.lineTo(-w/2+armW, h-armH-0.15);
-    shape.bezierCurveTo(-0.18, h-armH+0.05, -0.08, h, -0.12, 0);
+    shape.moveTo(-w/2, 0);
+    shape.lineTo(-w/2+0.08, h-0.05);
+    shape.bezierCurveTo(-0.3, h+0.05, 0.3, h+0.05, w/2-0.08, h-0.05);
+    shape.lineTo(w/2, 0);
     shape.lineTo(0.12, 0);
-    shape.bezierCurveTo(0.08, h, 0.18, h-armH+0.05, w/2-armW, h-armH-0.15);
-    shape.lineTo(w/2-0.1, h-armH-0.15);
-    shape.lineTo(w/2-0.1, 0);
-    shape.lineTo(-w/2+0.1, 0);
+    shape.lineTo(-0.12, 0);
   } else {
     shape.moveTo(-w/2, 0);
-    shape.lineTo(-w/2, h-armH+0.12);
-    shape.bezierCurveTo(-w/2+0.1, h-armH+0.18, -w/2+armW, h-armH+0.12, -w/2+armW+0.15, h);
+    shape.lineTo(-w/2, h - armH + 0.15);
+    shape.bezierCurveTo(-w/2+0.1, h-armH+0.15, -w/2+0.15, h-armH+0.1, -w/2+0.2, h-armH+0.22);
     shape.lineTo(-0.12, 0);
     shape.lineTo(0.12, 0);
-    shape.lineTo(w/2-armW-0.15, h);
-    shape.bezierCurveTo(w/2-armW, h-armH+0.12, w/2-0.1, h-armH+0.18, w/2, h-armH+0.12);
-    shape.lineTo(w/2, 0);
-    shape.lineTo(-w/2, 0);
+    shape.lineTo(w/2-0.2, h-armH+0.22);
+    shape.bezierCurveTo(w/2-0.15, h-armH+0.1, w/2-0.1, h-armH+0.15, w/2, 0);
   }
 
-  // Neck cutout
-  const neck = new THREE.Path();
-  neck.moveTo(-0.42, h); neck.lineTo(0, h-0.38); neck.lineTo(0.42, h);
-  shape.holes.push(neck);
-
-  const geo = new THREE.ExtrudeGeometry(shape, { depth:0.14, bevelEnabled:true, bevelThickness:0.015, bevelSize:0.012, bevelSegments:3 });
+  const extSettings = {
+    steps: 1,
+    depth: 0.12,
+    bevelEnabled: true,
+    bevelThickness: 0.012,
+    bevelSize: 0.01,
+    bevelSegments: 3,
+  };
+  const geo = new THREE.ExtrudeGeometry(shape, extSettings);
   geo.center();
-  g.add(new THREE.Mesh(geo, bodyMat));
-
-  // Stitch line bottom
-  const pts = [new THREE.Vector3(-0.12,-0.38,0.075), new THREE.Vector3(0.12,-0.38,0.075)];
-  g.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), mkStitch()));
+  const m = new THREE.Mesh(geo, bodyMat);
+  m.castShadow = true;
+  m.receiveShadow = true;
+  g.add(m);
   return g;
 }
 
+// ── Collar ────────────────────────────────────────────────
 function buildCollar() {
-  const g = new THREE.Group(), c = state.color;
+  const g = new THREE.Group();
+  const collarColor = new THREE.Color(state.color).multiplyScalar(0.75);
+  const cMat = new THREE.MeshStandardMaterial({ color: collarColor, roughness: 0.8, metalness: 0.05 });
+  const w = 1.22;
+
   if (state.collar === 'notch') {
-    // Left lapel
-    const s = new THREE.Shape();
-    s.moveTo(-0.42,0.58); s.lineTo(-0.12,0.68); s.lineTo(-0.18,0.35); s.lineTo(-0.52,0.35); s.lineTo(-0.42,0.58);
-    const geo = new THREE.ExtrudeGeometry(s, {depth:0.04,bevelEnabled:false});
-    const m = new THREE.Mesh(geo, collarMat); m.rotation.z=-0.25; m.position.set(-0.02,0.02,0); g.add(m);
-    // Right lapel
-    const sr = new THREE.Shape();
-    sr.moveTo(0.42,0.58); sr.lineTo(0.12,0.68); sr.lineTo(0.18,0.35); sr.lineTo(0.52,0.35); sr.lineTo(0.42,0.58);
-    const gr = new THREE.ExtrudeGeometry(sr, {depth:0.04,bevelEnabled:false});
-    const mr = new THREE.Mesh(gr, collarMat); mr.rotation.z=0.25; mr.position.set(0.02,0.02,0); g.add(mr);
+    const notch = 0.22;
+    const shape = new THREE.Shape();
+    shape.moveTo(-w/2, 0);
+    shape.lineTo(-w/2, 0.12);
+    shape.lineTo(-notch, 0.12);
+    shape.lineTo(-notch*0.4, 0.0);
+    shape.lineTo(0, -0.06);
+    shape.lineTo(notch*0.4, 0.0);
+    shape.lineTo(notch, 0.12);
+    shape.lineTo(w/2, 0.12);
+    shape.lineTo(w/2, 0);
+    const geo = new THREE.ExtrudeGeometry(shape, { depth: 0.06, bevelEnabled: false });
+    const m = new THREE.Mesh(geo, cMat);
+    m.position.set(0, 0.85, 0.03);
+    m.castShadow = true;
+    g.add(m);
   } else if (state.collar === 'shawl') {
-    const s = new THREE.Shape();
-    s.moveTo(-0.52,0.52); s.quadraticCurveTo(-0.3,0.74,0,0.66); s.quadraticCurveTo(0.3,0.74,0.52,0.52);
-    s.lineTo(0.44,0.42); s.lineTo(-0.44,0.42); s.lineTo(-0.52,0.52);
-    const geo = new THREE.ExtrudeGeometry(s, {depth:0.05,bevelEnabled:false});
-    g.add(new THREE.Mesh(geo, collarMat));
+    const curve = new THREE.QuadraticBezierCurve3(
+      new THREE.Vector3(-w/2, 0.75, 0),
+      new THREE.Vector3(0, 0.68, 0.1),
+      new THREE.Vector3(w/2, 0.75, 0)
+    );
+    const geo = new THREE.TubeGeometry(curve, 20, 0.05, 8, false);
+    const m = new THREE.Mesh(geo, cMat);
+    m.castShadow = true;
+    g.add(m);
   } else {
-    const geo = new THREE.TorusGeometry(0.38,0.03,8,32,Math.PI);
-    const m = new THREE.Mesh(geo, collarMat); m.rotation.x=Math.PI/2; m.position.y=0.62; g.add(m);
+    const geo = new THREE.BoxGeometry(w, 0.08, 0.08);
+    const m = new THREE.Mesh(geo, cMat);
+    m.position.set(0, 0.85, 0.02);
+    m.castShadow = true;
+    g.add(m);
   }
   return g;
 }
 
+// ── Closure ───────────────────────────────────────────────
 function buildClosure() {
-  const g = new THREE.Group(), mc = METAL[state.closure] ?? 0xc9a84c;
-  // Indent strip
-  const stripGeo = new THREE.BoxGeometry(0.025,1.6,0.01);
-  g.add(new THREE.Mesh(stripGeo, bodyMat.clone()));
-  stripGeo.translate(0,0,0.075);
+  const g = new THREE.Group();
+  const cMat = mkMetal(METAL[state.closure] ?? 0xc9a84c);
 
   if (state.closure === 'zip') {
-    for (let y=-0.65; y<=0.65; y+=0.05) {
-      const geo = new THREE.BoxGeometry(0.025,0.02,0.025);
-      const m = new THREE.Mesh(geo, closureMat); m.position.set(0,y,0.08); g.add(m);
-    }
-    const tabGeo = new THREE.TorusGeometry(0.04,0.012,8,16);
-    const tab = new THREE.Mesh(tabGeo, closureMat); tab.position.set(0,0.5,0.08); tab.rotation.x=Math.PI/2; g.add(tab);
+    const tabGeo = new THREE.BoxGeometry(0.06, 0.12, 0.04);
+    [-0.55, -0.3, -0.05, 0.2, 0.45].forEach((y, i) => {
+      const tab = new THREE.Mesh(tabGeo, cMat);
+      tab.position.set(0, y, 0.1);
+      g.add(tab);
+    });
+    const trackGeo = new THREE.BoxGeometry(0.03, 1.2, 0.03);
+    const track = new THREE.Mesh(trackGeo, mkMetal(0x888888));
+    track.position.set(0, 0, 0.09);
+    g.add(track);
   } else if (state.closure === 'button') {
-    for (let i=0;i<5;i++) {
-      const y = -0.55+i*(1.1/4);
-      const geo = new THREE.CylinderGeometry(0.035,0.035,0.015,16);
-      const m = new THREE.Mesh(geo, closureMat); m.rotation.x=Math.PI/2; m.position.set(0,y,0.08); g.add(m);
+    const btnGeo = new THREE.CylinderGeometry(0.04, 0.04, 0.025, 16);
+    for (let y = -0.5; y <= 0.5; y += 0.22) {
+      [-0.12, 0.12].forEach(x => {
+        const b = new THREE.Mesh(btnGeo, cMat);
+        b.rotation.x = Math.PI / 2;
+        b.position.set(x, y, 0.1);
+        g.add(b);
+      });
     }
   } else {
-    for (let i=0;i<7;i++) {
-      const y = -0.6+i*(1.2/6);
-      const geo = new THREE.CylinderGeometry(0.02,0.02,0.01,12);
-      const m = new THREE.Mesh(geo, closureMat); m.rotation.x=Math.PI/2; m.position.set(0,y,0.08); g.add(m);
+    const snapGeo = new THREE.SphereGeometry(0.03, 8, 8);
+    for (let y = -0.5; y <= 0.5; y += 0.22) {
+      [-0.12, 0.12].forEach(x => {
+        const s = new THREE.Mesh(snapGeo, cMat);
+        s.position.set(x, y, 0.1);
+        g.add(s);
+      });
     }
   }
   return g;
 }
 
-function buildBraid() {
-  if (state.braid === 'none') return new THREE.Group();
-  const g = new THREE.Group(), r=0.022, c=state.color;
-  const rope = (pts) => {
-    const curve = new THREE.CatmullRomCurve3(pts.map(p => new THREE.Vector3(...p)));
-    const geo = new THREE.TubeGeometry(curve,16,r,8,false);
-    return new THREE.Mesh(geo, new THREE.MeshStandardMaterial({color:c,roughness:0.85,metalness:0.05}));
-  };
+// ── Braid ─────────────────────────────────────────────────
+function rope(points) {
+  const curve = new THREE.CatmullRomCurve3(points.map(p => new THREE.Vector3(...p)));
+  const geo = new THREE.TubeGeometry(curve, 20, 0.012, 6, false);
+  const m = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: 0x8a6a3a, roughness: 0.7, metalness: 0.1 }));
+  m.castShadow = true;
+  return m;
+}
+
+function buildBraids() {
+  const g = new THREE.Group();
+  if (state.braid === 'none') return g;
+
+  const xOff = state.closure === 'zip' ? 0.18 : 0.22;
+  const z = 0.085;
+
   if (state.braid === 'single') {
-    g.add(rope([[-0.12,-0.38,0.075],[0,-0.41,0.075],[0.12,-0.38,0.075]]));
-    g.add(rope([[-0.56,-0.1,0.075],[-0.59,-0.26,0.075]]));
-    g.add(rope([[0.56,-0.1,0.075],[0.59,-0.26,0.075]]));
+    g.add(rope([[-xOff, 0.55, z], [-xOff*0.6, 0.3, z], [0, 0.0, z], [xOff*0.6, -0.3, z], [xOff, -0.55, z]]));
   } else {
-    g.add(rope([[-0.12,-0.35,0.075],[0,-0.38,0.075],[0.12,-0.35,0.075]]));
-    g.add(rope([[-0.12,-0.41,0.075],[0,-0.44,0.075],[0.12,-0.41,0.075]]));
-    g.add(rope([[-0.56,-0.1,0.075],[-0.59,-0.26,0.075]]));
-    g.add(rope([[-0.56,-0.1,0.075],[-0.59,-0.26,0.075]]));
-    g.add(rope([[0.56,-0.1,0.075],[0.59,-0.26,0.075]]));
-    g.add(rope([[0.56,-0.1,0.075],[0.59,-0.26,0.075]]));
+    g.add(rope([[-xOff, 0.55, z], [-xOff*0.6, 0.3, z], [-xOff*0.3, 0.0, z], [0, -0.3, z], [xOff*0.3, -0.55, z]]));
+    g.add(rope([[xOff, 0.55, z], [xOff*0.6, 0.3, z], [xOff*0.3, 0.0, z], [0, -0.3, z], [-xOff*0.3, -0.55, z]]));
   }
+
+  // Corner ties
+  g.add(rope([[-0.12,-0.35,z],[0,-0.38,z],[0.12,-0.35,z]]));
+  g.add(rope([[-0.12,-0.41,z],[0,-0.44,z],[0.12,-0.41,z]]));
+  g.add(rope([[-0.56,-0.1,z],[-0.59,-0.26,z]]));
+  g.add(rope([[0.56,-0.1,z],[0.59,-0.26,z]]));
+
   return g;
 }
 
+// ── Shoulder patches ──────────────────────────────────────
 function buildShoulderPatches() {
   const g = new THREE.Group();
-  const geo = new THREE.BoxGeometry(0.22,0.06,0.04);
-  [[−0.98,0.55],[0.98,0.55]].forEach(([x,y]) => {
-    const m = new THREE.Mesh(geo, bodyMat.clone());
-    m.position.set(x,y,0.08); m.rotation.z = x>0?0.15:-0.15;
+  const geo = new THREE.BoxGeometry(0.22, 0.06, 0.04);
+  const patchColor = new THREE.Color(state.color).multiplyScalar(0.6);
+  const pMat = new THREE.MeshStandardMaterial({ color: patchColor, roughness: 0.9, metalness: 0.0 });
+  [[-0.98, 0.55],[0.98, 0.55]].forEach(([x, y]) => {
+    const m = new THREE.Mesh(geo, pMat);
+    m.position.set(x, y, 0.08);
+    m.rotation.z = x > 0 ? 0.15 : -0.15;
+    m.castShadow = true;
     g.add(m);
   });
   return g;
 }
 
-// ── Scene setup ────────────────────────────────────────────
+// ── Assemble vest ─────────────────────────────────────────
+function buildVest() {
+  const g = new THREE.Group();
+  g.add(buildTorso());
+  g.add(buildCollar());
+  g.add(buildClosure());
+  g.add(buildBraids());
+  g.add(buildShoulderPatches());
+  return g;
+}
+
+// ── Renderer & scene ──────────────────────────────────────
 const canvas = document.getElementById('c');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -331,13 +396,11 @@ renderer.toneMappingExposure = 1.1;
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x0a0a0a);
-scene.fog = new THREE.FogExp2(0x0a0a0a, 0.35);
+scene.fog = new THREE.FogExp2(0x0a0a0a, 0.3);
 
-// Camera
-const camera = new THREE.PerspectiveCamera(42, innerWidth/innerHeight, 0.01, 50);
+const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.01, 50);
 camera.position.set(0, 0.1, 4.8);
 
-// Controls
 const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
 controls.dampingFactor = 0.07;
@@ -352,6 +415,14 @@ scene.add(ambient);
 const key = new THREE.DirectionalLight(0xfff5e8, 2.8);
 key.position.set(2, 4, 4);
 key.castShadow = true;
+key.shadow.mapSize.width = 2048;
+key.shadow.mapSize.height = 2048;
+key.shadow.camera.near = 0.5;
+key.shadow.camera.far = 20;
+key.shadow.camera.left = -3;
+key.shadow.camera.right = 3;
+key.shadow.camera.top = 3;
+key.shadow.camera.bottom = -3;
 scene.add(key);
 const fill = new THREE.DirectionalLight(0xc8d8ff, 0.6);
 fill.position.set(-3, 1, 2);
@@ -360,7 +431,7 @@ const rim = new THREE.DirectionalLight(0xffd580, 0.4);
 rim.position.set(0, -2, -3);
 scene.add(rim);
 
-// Ground plane (shadow catcher)
+// Ground plane
 const groundGeo = new THREE.PlaneGeometry(20, 20);
 const groundMat = new THREE.ShadowMaterial({ opacity: 0.25 });
 const ground = new THREE.Mesh(groundGeo, groundMat);
@@ -369,62 +440,63 @@ ground.position.y = -1.0;
 ground.receiveShadow = true;
 scene.add(ground);
 
-// Vest group
-let vestGroup = new THREE.Group();
+// Build initial vest
+refreshMaterials();
+let vestGroup = buildVest();
 scene.add(vestGroup);
 
-function rebuild() {
+function refreshMaterials() {
+  const c = state.color;
+  bodyMat    = mkMat(c);
+  collarMat  = mkMat(new THREE.Color(c).multiplyScalar(0.75));
+  closureMat = mkMetal(METAL[state.closure] ?? 0xc9a84c);
+}
+
+function updateVest() {
   dispose(vestGroup);
-  vestGroup.clear();
+  scene.remove(vestGroup);
   refreshMaterials();
-  vestGroup.add(buildTorso());
-  vestGroup.add(buildCollar());
-  vestGroup.add(buildClosure());
-  vestGroup.add(buildBraid());
-  vestGroup.add(buildShoulderPatches());
-  vestGroup.position.y = -0.3;
-  vestGroup.traverse(o => { if (o.isMesh) o.castShadow = true; });
+  vestGroup = buildVest();
+  scene.add(vestGroup);
 }
-rebuild();
 
-// Resize
+// ── UI handlers ────────────────────────────────────────────
+document.querySelectorAll('.btn-color').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.btn-color').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const id = btn.id.replace('s-', '');
+    state.leather = id;
+    state.color = COLORS[id];
+    updateVest();
+  });
+});
+
+['cut', 'closure', 'collar', 'braid'].forEach(type => {
+  document.querySelectorAll(`[data-${type}]`).forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll(`[data-${type}]`).forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state[type] = btn.dataset[type];
+      if (type === 'closure') {
+        // Update closure material
+        vestGroup.traverse(o => {
+          if (o.isMesh && o.material && o.material.metalness > 0.5) {
+            o.material = mkMetal(METAL[state.closure] ?? 0xc9a84c);
+          }
+        });
+      } else {
+        updateVest();
+      }
+    });
+  });
+});
+
+// ── Resize ───────────────────────────────────────────────
 window.addEventListener('resize', () => {
-  camera.aspect = innerWidth / innerHeight;
+  camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
-  renderer.setSize(innerWidth, innerHeight);
-});
-
-// ── Controls UI ────────────────────────────────────────────
-function setLeather(color) {
-  state.leather = color;
-  state.color = COLORS[color];
-  document.querySelectorAll('.btn-color').forEach(b => b.classList.remove('active'));
-  document.getElementById('s-' + color).classList.add('active');
-  rebuild();
-}
-
-function setBtn(type, attr, val) {
-  state[attr] = val;
-  document.querySelectorAll(`[data-${attr}]`).forEach(b => b.classList.toggle('active', b.dataset[attr] === val));
-  rebuild();
-}
-
-document.getElementById('s-black').addEventListener('click',   () => setLeather('black'));
-document.getElementById('s-brown').addEventListener('click',   () => setLeather('brown'));
-document.getElementById('s-oxblood').addEventListener('click',() => setLeather('oxblood'));
-document.getElementById('s-tan').addEventListener('click',    () => setLeather('tan'));
-
-document.querySelectorAll('[data-cut]').forEach(btn => {
-  btn.addEventListener('click', () => setBtn('cut', 'cut', btn.dataset.cut));
-});
-document.querySelectorAll('[data-closure]').forEach(btn => {
-  btn.addEventListener('click', () => { state.closure = btn.dataset.closure; refreshMaterials(); rebuild(); setBtn(null,'closure',btn.dataset.closure); });
-});
-document.querySelectorAll('[data-collar]').forEach(btn => {
-  btn.addEventListener('click', () => setBtn(null,'collar',btn.dataset.collar));
-});
-document.querySelectorAll('[data-braid]').forEach(btn => {
-  btn.addEventListener('click', () => setBtn(null,'braid',btn.dataset.braid));
+  renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
 // ── Render loop ───────────────────────────────────────────
