@@ -1,312 +1,258 @@
 /**
- * DEAD LETTERS — Three.js Vest Builder
- * Builds a parametric leather vest mesh from scratch.
- * Works standalone — just open vest3d.html.
+ * DEAD LETTERS — Three.js Vest Builder (ES Module)
+ * Identical option set to crimwearco.com TCustomizer.
+ * Uses real vest.glb model with dynamic color updates.
  */
 
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
-import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js';
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-// ── State ──────────────────────────────────────────────
-export const state = {
-  leather: 'black',   // black | brown | oxblood | tan
-  cut:     'classic', // classic | racer | field
-  closure: 'zip',     // zip | button | snap
-  collar:  'notch',   // notch | shawl | flat
-  braid:   'single',  // single | double | none
-  color:   0x1a1a1a,
+// ── State ──────────────────────────────────────────────────
+const state = {
+  gender:   'male',
+  style:    'australian',
+  leather:  'black',
+  cut:      'tom',
+  closure:  'bolo',
+  collar:   'widev',
+  braid:    'none',
+  stitch:   'matching',
+  liner:    'standard',
+  kevlar:   'none',
+  piping:   'standard',
+  reversible: 'no',
+  zipperAccess: 'no',
+  patch:    'none',
+  addons:   new Set(),
+  color:    0x1a1a1a,
 };
 
-export const COLORS = {
-  black:   0x1a1a1a,
-  brown:   0x3d1a0a,
-  oxblood: 0x4a0f0f,
-  tan:     0x8c5a2e,
+// ── Color maps ─────────────────────────────────────────────
+const COLORS = {
+  black: 0x1a1a1a, white: 0xf0f0f0, blue: 0x1a3a6e, red: 0x8b0000,
+  green: 0x2d4a1e, orange: 0xb35000, desertbrown: 0x8b5a2b,
+  stormgrey: 0x4a4a4a, blackops: 0x0d0d0d, blackperf: 0x2a2a2a,
+  multical: 0x5c5c3c,
 };
 
-const METAL_COLORS = {
-  zip:   0xc9a84c,  // brass
-  button: 0x888888, // silver
-  snap:  0xaaaaaa,  // chrome
+// ── Pricing ────────────────────────────────────────────────
+const STYLE_BASE = { australian: 825, nz: 825, american: 800, euro: 800, tactical: 999, swat: 800 };
+const KEVLAR_PRICE = { none: 0, '1layer': 75, '2layers': 150, '3layers': 225, '4layers': 300,
+  '5layers': 375, '6layers': 450, '7layers': 525, '8layers': 600, '9layers': 675, '10layers': 750 };
+const ADDON_PRICE = {
+  extrapocket: 15, hiddenstash: 15, gunpocket: 30, zipext: 100,
+  heatedliner: 175, customprint: 100, fullzipliner: 75,
+  customfit: 150, dutchback: 0, fatstrap: 0,
 };
+const PATCH_PRICE = { none: 0, eagle: 55, cross: 55, custom: 75 };
+const REVERSIBLE_PRICE = { no: 0, yes: 75 };
+const ZIPPER_ACCESS_PRICE = { no: 0, yes: 50 };
 
-// ── Material factory ───────────────────────────────────
-function leatherMat(color) {
-  return new THREE.MeshStandardMaterial({
-    color,
-    roughness: 0.85,
-    metalness: 0.05,
-    side: THREE.DoubleSide,
+// ── Scene setup ────────────────────────────────────────────
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.1;
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0a0a0a);
+scene.fog = new THREE.FogExp2(0x0a0a0a, 0.3);
+
+const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.01, 50);
+camera.position.set(0, 0.1, 4.8);
+
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true;
+controls.dampingFactor = 0.07;
+controls.minDistance = 2.5;
+controls.maxDistance = 9;
+controls.target.set(0, 0.1, 0);
+
+// Lights
+const ambient = new THREE.AmbientLight(0x3a2a1a, 3.5);
+scene.add(ambient);
+const key = new THREE.DirectionalLight(0xfff5e8, 2.8);
+key.position.set(2, 4, 4); key.castShadow = true;
+key.shadow.mapSize.set(2048, 2048);
+key.shadow.camera.near = 0.5; key.shadow.camera.far = 20;
+key.shadow.camera.left = -3; key.shadow.camera.right = 3;
+key.shadow.camera.top = 3; key.shadow.camera.bottom = -3;
+scene.add(key);
+const fill1 = new THREE.DirectionalLight(0xc8d8ff, 0.6);
+fill1.position.set(-3, 1, 2); scene.add(fill1);
+const fill2 = new THREE.DirectionalLight(0xffd580, 0.4);
+fill2.position.set(0, -2, -3); scene.add(fill2);
+
+// Ground shadow
+const groundGeo = new THREE.PlaneGeometry(20, 20);
+const groundMat = new THREE.ShadowMaterial({ opacity: 0.25 });
+const ground = new THREE.Mesh(groundGeo, groundMat);
+ground.rotation.x = -Math.PI / 2; ground.position.y = -1.0;
+ground.receiveShadow = true; scene.add(ground);
+
+// ── Vest model ────────────────────────────────────────────
+let vestGroup = null;
+const loader = new GLTFLoader();
+let meshMaterials = []; // Track leather meshes for color updates
+
+function loadModel() {
+  loader.load(
+    'vest.glb?' + Date.now(),
+    (gltf) => {
+      if (vestGroup) { scene.remove(vestGroup); disposeGroup(vestGroup); }
+      vestGroup = gltf.scene;
+      meshMaterials = [];
+
+      vestGroup.traverse(o => {
+        if (o.isMesh) {
+          o.castShadow = true; o.receiveShadow = true;
+          // Capture all leather-colored meshes for dynamic updates
+          if (o.material && o.material.isMeshStandardMaterial && !o.material.metalness) {
+            meshMaterials.push(o.material);
+          }
+          // Ensure metalness materials stay metal
+          if (o.material && o.material.metalness > 0.5) {
+            o.material.metalness = 0.9;
+            o.material.roughness = 0.3;
+          }
+        }
+      });
+
+      scene.add(vestGroup);
+      // Apply initial color
+      updateVestColor(state.color);
+    },
+    undefined,
+    (err) => {
+      console.error('GLB load error:', err);
+    }
+  );
+}
+
+function disposeGroup(group) {
+  group.traverse(o => {
+    if (o.geometry) o.geometry.dispose();
+    if (o.material) {
+      if (Array.isArray(o.material)) o.material.forEach(m => m.dispose());
+      else o.material.dispose();
+    }
   });
 }
 
-function metalMat(color) {
-  return new THREE.MeshStandardMaterial({
-    color,
-    roughness: 0.25,
-    metalness: 0.95,
+// ── Color update ──────────────────────────────────────────
+function updateVestColor(hexColor) {
+  if (meshMaterials.length === 0) return;
+  const color = new THREE.Color(hexColor);
+  for (const mat of meshMaterials) {
+    mat.color.copy(color);
+    mat.needsUpdate = true;
+  }
+}
+
+// ── Option image overlay ───────────────────────────────────
+const overlay = document.getElementById('option-img-overlay');
+
+function getOptionImageSrc() {
+  const style = state.style;
+  const leather = state.leather;
+  // Check for cropped option-specific image
+  const capPath = `assets/caps/${style}_${leather}.png`;
+  const fs = document.createElement('fs');
+  // Fall back to style screenshot
+  const styleScreenshots = {
+    australian: 'assets/australian_style.png',
+    nz: 'assets/nz_style.png',
+    american: 'assets/us_style.png',
+    euro: 'assets/euro_style.png',
+    tactical: 'assets/tactical_style.png',
+    swat: 'assets/swat_style.png',
+  };
+  // Use the caps image if it exists
+  if (style === 'australian') {
+    const leatherMap = {
+      black: 'assets/caps/australian_Black_Leather.png',
+      suede: 'assets/caps/australian_Black_Suede.png',
+      brown: 'assets/caps/australian_Brown_Leather.png',
+      red: 'assets/caps/australian_Red_Leather.png',
+      white: 'assets/caps/australian_White_Leather.png',
+    };
+    if (leatherMap[leather]) return leatherMap[leather];
+  }
+  return styleScreenshots[style] || 'assets/main_vest.png';
+}
+
+function updateOptionImage() {
+  const src = getOptionImageSrc();
+  overlay.style.backgroundImage = `url(${src})`;
+  overlay.classList.add('visible');
+}
+
+// ── Price calculation ──────────────────────────────────────
+function updatePrice() {
+  let base = STYLE_BASE[state.style] || 825;
+  let kevlar = KEVLAR_PRICE[state.kevlar] || 0;
+  let patch = PATCH_PRICE[state.patch] || 0;
+  let rev = REVERSIBLE_PRICE[state.reversible] || 0;
+  let za = ZIPPER_ACCESS_PRICE[state.zipperAccess] || 0;
+  let addons_total = 0;
+  state.addons.forEach(a => { addons_total += ADDON_PRICE[a] || 0; });
+
+  const total = base + kevlar + patch + rev + za + addons_total;
+  document.getElementById('priceAmount').textContent =
+    '$' + total.toLocaleString('en-US');
+}
+
+// ── UI event handling ──────────────────────────────────────
+document.querySelectorAll('[data-group]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const group = btn.dataset.group;
+    const value = btn.dataset.value;
+
+    if (group === 'addons') {
+      if (state.addons.has(value)) state.addons.delete(value);
+      else state.addons.add(value);
+    } else if (group === 'leather') {
+      state.leather = value;
+      state.color = COLORS[value] || 0x1a1a1a;
+      updateVestColor(state.color);
+    } else {
+      state[group] = value;
+    }
+
+    // Update active states
+    document.querySelectorAll(`[data-group="${group}"]`).forEach(b => {
+      b.classList.toggle('active', b.dataset.value === value || (
+        group === 'addons' && state.addons.has(b.dataset.value)
+      ));
+    });
+
+    updatePrice();
+    updateOptionImage();
   });
+});
+
+// ── Resize ─────────────────────────────────────────────────
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+// ── Animation loop ─────────────────────────────────────────
+function animate() {
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene, camera);
 }
 
-function stitchMat() {
-  return new THREE.LineBasicMaterial({ color: 0x9a7a5a, linewidth: 1 });
-}
-
-// ── Vest geometry builders ──────────────────────────────
-
-/** Main torso — tapered box with V-cut bottom */
-function buildTorso(cut) {
-  const g = new THREE.Group();
-
-  // Shape in XY plane, extrude along Z
-  const shape = new THREE.Shape();
-  const w = 1.2, h = 1.7, neck = 0.42, armW = 0.38, armH = 0.72;
-
-  if (cut === 'classic') {
-    shape.moveTo(-w/2, 0);
-    shape.lineTo(-w/2, h - armH);
-    shape.lineTo(-w/2 + armW, h - armH);  // armhole curve
-    shape.quadraticCurveTo(-w/2 + armW + 0.08, h - armH + 0.05, -w/2 + armW + 0.15, h);
-    shape.lineTo(-0.12, 0); // diagonal bottom left
-    shape.lineTo(0.12, 0);  // diagonal bottom right
-    shape.lineTo(w/2 - armW - 0.15, h);
-    shape.quadraticCurveTo(w/2 - armW - 0.08, h - armH + 0.05, w/2 - armW, h - armH);
-    shape.lineTo(w/2, h - armH);
-    shape.lineTo(w/2, 0);
-    shape.lineTo(-w/2, 0);
-  } else if (cut === 'racer') {
-    shape.moveTo(-w/2 + 0.1, 0);
-    shape.lineTo(-w/2 + 0.1, h - armH - 0.12);
-    shape.lineTo(-w/2 + armW + 0.05, h - armH - 0.12);
-    shape.lineTo(-0.12, 0);
-    shape.lineTo(0.12, 0);
-    shape.lineTo(w/2 - armW - 0.05, h - armH - 0.12);
-    shape.lineTo(w/2 - 0.1, h - armH - 0.12);
-    shape.lineTo(w/2 - 0.1, 0);
-    shape.lineTo(-w/2 + 0.1, 0);
-  } else if (cut === 'field') {
-    shape.moveTo(-w/2, 0);
-    shape.lineTo(-w/2, h - armH + 0.1);
-    shape.lineTo(-w/2 + armW + 0.1, h - armH + 0.1);
-    shape.lineTo(-0.12, 0);
-    shape.lineTo(0.12, 0);
-    shape.lineTo(w/2 - armW - 0.1, h - armH + 0.1);
-    shape.lineTo(w/2, h - armH + 0.1);
-    shape.lineTo(w/2, 0);
-    shape.lineTo(-w/2, 0);
-  }
-
-  // Neck cutout
-  const neckCut = new THREE.Path();
-  neckCut.moveTo(-neck, h);
-  neckCut.lineTo(0, h - 0.35);
-  neckCut.lineTo(neck, h);
-  shape.holes.push(neckCut);
-
-  const extSettings = {
-    depth: 0.14,
-    bevelEnabled: true,
-    bevelThickness: 0.015,
-    bevelSize: 0.012,
-    bevelSegments: 3,
-  };
-
-  const geo = new THREE.ExtrudeGeometry(shape, extSettings);
-  geo.center();
-  const mesh = new THREE.Mesh(geo, leatherMat(state.color));
-  g.add(mesh);
-
-  // Stitch lines along bottom edge
-  const stitchGeo = new THREE.BufferGeometry().setFromPoints([
-    new THREE.Vector3(-0.12, -0.38, 0.08),
-    new THREE.Vector3(0.12, -0.38, 0.08),
-  ]);
-  g.add(new THREE.Line(stitchGeo, stitchMat()));
-
-  return g;
-}
-
-/** Collar trim */
-function buildCollar(collarType) {
-  const g = new THREE.Group();
-  const c = state.color;
-
-  if (collarType === 'notch') {
-    // Left lapel
-    const shape = new THREE.Shape();
-    shape.moveTo(-0.42, 0.58);
-    shape.lineTo(-0.12, 0.68);
-    shape.lineTo(-0.18, 0.35);
-    shape.lineTo(-0.5, 0.35);
-    shape.lineTo(-0.42, 0.58);
-    const geo = new THREE.ExtrudeGeometry(shape, { depth: 0.04, bevelEnabled: false });
-    const m = new THREE.Mesh(geo, leatherMat(c));
-    m.rotation.z = -0.2;
-    g.add(m);
-
-    // Right lapel (mirror)
-    const shapeR = new THREE.Shape();
-    shapeR.moveTo(0.42, 0.58);
-    shapeR.lineTo(0.12, 0.68);
-    shapeR.lineTo(0.18, 0.35);
-    shapeR.lineTo(0.5, 0.35);
-    shapeR.lineTo(0.42, 0.58);
-    const geoR = new THREE.ExtrudeGeometry(shapeR, { depth: 0.04, bevelEnabled: false });
-    const mR = new THREE.Mesh(geoR, leatherMat(c));
-    mR.rotation.z = 0.2;
-    g.add(mR);
-  } else if (collarType === 'shawl') {
-    const shape = new THREE.Shape();
-    shape.moveTo(-0.5, 0.5);
-    shape.quadraticCurveTo(-0.3, 0.72, 0, 0.65);
-    shape.quadraticCurveTo(0.3, 0.72, 0.5, 0.5);
-    shape.lineTo(0.42, 0.4);
-    shape.lineTo(-0.42, 0.4);
-    shape.lineTo(-0.5, 0.5);
-    const geo = new THREE.ExtrudeGeometry(shape, { depth: 0.05, bevelEnabled: false });
-    const m = new THREE.Mesh(geo, leatherMat(c));
-    g.add(m);
-  } else {
-    // flat — simple band
-    const geo = new THREE.TorusGeometry(0.36, 0.03, 8, 32, Math.PI);
-    const m = new THREE.Mesh(geo, leatherMat(c));
-    m.rotation.x = Math.PI / 2;
-    m.position.y = 0.62;
-    g.add(m);
-  }
-
-  return g;
-}
-
-/** Center closure line + hardware */
-function buildClosure(type) {
-  const g = new THREE.Group();
-  const mCol = METAL_COLORS[type] ?? 0xc9a84c;
-
-  // Vertical strip (slight indent)
-  const stripGeo = new THREE.BoxGeometry(0.025, 1.55, 0.01);
-  const strip = new THREE.Mesh(stripGeo, leatherMat(state.color));
-  strip.position.z = 0.075;
-  g.add(strip);
-
-  if (type === 'zip') {
-    // Zipper teeth
-    for (let y = -0.65; y <= 0.65; y += 0.05) {
-      const geo = new THREE.BoxGeometry(0.025, 0.02, 0.025);
-      const m = new THREE.Mesh(geo, metalMat(mCol));
-      m.position.set(0, y, 0.08);
-      g.add(m);
-    }
-    // Pull tab
-    const tabGeo = new THREE.TorusGeometry(0.04, 0.01, 8, 16);
-    const tab = new THREE.Mesh(tabGeo, metalMat(mCol));
-    tab.position.set(0, 0.5, 0.08);
-    tab.rotation.x = Math.PI / 2;
-    g.add(tab);
-  } else if (type === 'button') {
-    const buttonCount = 5;
-    for (let i = 0; i < buttonCount; i++) {
-      const y = -0.55 + i * (1.1 / (buttonCount - 1));
-      const geo = new THREE.CylinderGeometry(0.035, 0.035, 0.015, 16);
-      const m = new THREE.Mesh(geo, metalMat(mCol));
-      m.rotation.x = Math.PI / 2;
-      m.position.set(0, y, 0.08);
-      g.add(m);
-    }
-  } else if (type === 'snap') {
-    const snapCount = 7;
-    for (let i = 0; i < snapCount; i++) {
-      const y = -0.6 + i * (1.2 / (snapCount - 1));
-      const geo = new THREE.CylinderGeometry(0.02, 0.02, 0.01, 12);
-      const m = new THREE.Mesh(geo, metalMat(mCol));
-      m.rotation.x = Math.PI / 2;
-      m.position.set(0, y, 0.08);
-      g.add(m);
-    }
-  }
-
-  return g;
-}
-
-/** Edge braid along bottom hem and armholes */
-function buildBraid(braidType) {
-  if (braidType === 'none') return new THREE.Group();
-
-  const g = new THREE.Group();
-  const r = 0.022;
-
-  // Bottom braid — two ropes for double
-  const addRope = (yOffset) => {
-    const curve = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(-0.12, yOffset - 0.38, 0.07),
-      new THREE.Vector3(0.0,  yOffset - 0.41, 0.07),
-      new THREE.Vector3(0.12, yOffset - 0.38, 0.07),
-    ]);
-    const geo = new THREE.TubeGeometry(curve, 16, r, 8, false);
-    g.add(new THREE.Mesh(geo, leatherMat(state.color)));
-  };
-
-  if (braidType === 'single') {
-    addRope(0);
-    // Side braids
-    const leftCurve = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(-0.55, -0.1, 0.07),
-      new THREE.Vector3(-0.58, -0.25, 0.07),
-    ]);
-    g.add(new THREE.Mesh(new THREE.TubeGeometry(leftCurve, 8, r, 8, false), leatherMat(state.color)));
-    const rightCurve = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(0.55, -0.1, 0.07),
-      new THREE.Vector3(0.58, -0.25, 0.07),
-    ]);
-    g.add(new THREE.Mesh(new THREE.TubeGeometry(rightCurve, 8, r, 8, false), leatherMat(state.color)));
-  } else {
-    addRope(0.025);
-    addRope(-0.025);
-    const leftCurve = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(-0.55, -0.1, 0.07),
-      new THREE.Vector3(-0.58, -0.25, 0.07),
-    ]);
-    const rightCurve = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(0.55, -0.1, 0.07),
-      new THREE.Vector3(0.58, -0.25, 0.07),
-    ]);
-    g.add(new THREE.Mesh(new THREE.TubeGeometry(leftCurve, 8, r, 8, false), leatherMat(state.color)));
-    g.add(new THREE.Mesh(new THREE.TubeGeometry(leftCurve, 8, r, 8, false), leatherMat(state.color)));
-    g.add(new THREE.Mesh(new THREE.TubeGeometry(rightCurve, 8, r, 8, false), leatherMat(state.color)));
-    g.add(new THREE.Mesh(new THREE.TubeGeometry(rightCurve, 8, r, 8, false), leatherMat(state.color)));
-  }
-
-  return g;
-}
-
-/** Shoulder eppaulettes/patches */
-function buildShoulderPatches() {
-  const g = new THREE.Group();
-  const patchGeo = new THREE.BoxGeometry(0.22, 0.06, 0.04);
-  const positions = [[-0.98, 0.55], [0.98, 0.55]];
-  for (const [x, y] of positions) {
-    const m = new THREE.Mesh(patchGeo, leatherMat(state.color));
-    m.position.set(x, y, 0.08);
-    m.rotation.z = x > 0 ? 0.15 : -0.15;
-    g.add(m);
-  }
-  return g;
-}
-
-// ── Scene builder ────────────────────────────────────────
-export function buildVest() {
-  const group = new THREE.Group();
-  group.add(buildTorso(state.cut));
-  group.add(buildCollar(state.collar));
-  group.add(buildClosure(state.closure));
-  group.add(buildBraid(state.braid));
-  group.add(buildShoulderPatches());
-  group.position.y = -0.3;
-  return group;
-}
-
-export function updateVestColor(color) {
-  state.color = COLORS[color] ?? COLORS.black;
-  // Rebuild to apply new color
-  // (In production, would cache meshes and update material.color only)
-}
+// ── Init ───────────────────────────────────────────────────
+loadModel();
+updatePrice();
+updateOptionImage();
+animate();
