@@ -354,10 +354,45 @@ function buildShoulderPatches() {
 
 // ── Assemble ─────────────────────────────────────────────
 function buildVest() {
+  // Procedural fallback — replaced by GLB loader below
   const g = new THREE.Group();
   g.add(buildTorso(), buildCollar(), buildClosure(), buildBraids(), buildShoulderPatches());
   return g;
 }
+
+// ── GLB Loader ───────────────────────────────────────────
+let vestGroup = null;
+
+function loadVestModel() {
+  const loader = new THREE.GLTFLoader();
+  loader.load(
+    'vest.glb?' + Date.now(),
+    (gltf) => {
+      if (vestGroup) { scene.remove(vestGroup); disposeGroup(vestGroup); }
+      vestGroup = gltf.scene;
+      vestGroup.traverse(o => {
+        if (o.isMesh) {
+          o.castShadow = true; o.receiveShadow = true;
+          if (!o.material.metalness) {
+            o.material = mkMat(state.color); // override with our leather mat
+          } else {
+            // Metal hardware — keep but tint
+            o.material.metalness = 0.9; o.material.roughness = 0.3;
+          }
+        }
+      });
+      scene.add(vestGroup);
+    },
+    undefined,
+    (err) => { console.error('GLB load error:', err); }
+  );
+}
+
+// Initial vest — show procedural immediately, then swap in GLB
+refreshMaterials();
+vestGroup = buildVest();
+scene.add(vestGroup);
+loadVestModel(); // async — GLB will replace once loaded
 
 // ── Renderer & scene ──────────────────────────────────────
 const canvas = document.getElementById('c');
@@ -406,8 +441,9 @@ ground.rotation.x = -Math.PI / 2; ground.position.y = -1.0; ground.receiveShadow
 scene.add(ground);
 
 refreshMaterials();
-let vestGroup = buildVest();
+vestGroup = buildVest();
 scene.add(vestGroup);
+loadVestModel();
 
 function refreshMaterials() {
   const c = state.color;
@@ -420,6 +456,7 @@ function updateVest() {
   dispose(vestGroup); scene.remove(vestGroup);
   refreshMaterials();
   vestGroup = buildVest(); scene.add(vestGroup);
+  loadVestModel();
 }
 
 // ── UI ────────────────────────────────────────────────────
