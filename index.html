@@ -152,13 +152,21 @@
               <div class="price-display">
                 <span class="price-label">TOTAL</span>
                 <strong id="priceValue">$899</strong>
-                <small>USD</small>
+                <small>AUD</small>
               </div>
             </div>
           </div>
 
           <!-- Options -->
           <div class="options-panel">
+            <div class="option-category">
+              <h3>Gender</h3>
+              <div class="choice-row" data-group="gender">
+                <button class="choice is-selected" type="button" data-option="gender" data-value="male" aria-pressed="true">Male</button>
+                <button class="choice" type="button" data-option="gender" data-value="female" aria-pressed="false">Female</button>
+              </div>
+            </div>
+
             <div class="option-category">
               <h3>Leather</h3>
               <div class="choice-row" data-group="leather">
@@ -211,6 +219,78 @@
                 <button class="choice is-selected" type="button" data-option="braid" data-value="none" aria-pressed="true">None</button>
                 <button class="choice" type="button" data-option="braid" data-value="single" aria-pressed="false">Single Braid <span class="price-note">+$65</span></button>
                 <button class="choice" type="button" data-option="braid" data-value="double" aria-pressed="false">Double Braid <span class="price-note">+$120</span></button>
+              </div>
+            </div>
+
+            <div class="option-category">
+              <h3>Stitch Colour</h3>
+              <div class="choice-row" data-group="stitch">
+                <button class="choice is-selected" type="button" data-option="stitch" data-value="matching" aria-pressed="true">Matching</button>
+                <button class="choice" type="button" data-option="stitch" data-value="white" aria-pressed="false">White</button>
+                <button class="choice" type="button" data-option="stitch" data-value="red" aria-pressed="false">Red <span class="price-note">+$15</span></button>
+                <button class="choice" type="button" data-option="stitch" data-value="gold" aria-pressed="false">Gold <span class="price-note">+$20</span></button>
+                <button class="choice" type="button" data-option="stitch" data-value="silver" aria-pressed="false">Silver <span class="price-note">+$20</span></button>
+              </div>
+            </div>
+
+            <div class="option-category">
+              <h3>Lining</h3>
+              <div class="choice-row" data-group="liner">
+                <button class="choice is-selected" type="button" data-option="liner" data-value="standard" aria-pressed="true">Standard Mesh</button>
+                <button class="choice" type="button" data-option="liner" data-value="breathable" aria-pressed="false">Breathable <span class="price-note">+$30</span></button>
+                <button class="choice" type="button" data-option="liner" data-value="satin" aria-pressed="false">Satin <span class="price-note">+$50</span></button>
+                <button class="choice" type="button" data-option="liner" data-value="diamond" aria-pressed="false">Diamond Quilt <span class="price-note">+$80</span></button>
+              </div>
+            </div>
+
+            <div class="option-category">
+              <h3>Kevlar Lining</h3>
+              <div class="choice-row" data-group="kevlar">
+                <button class="choice is-selected" type="button" data-option="kevlar" data-value="none" aria-pressed="true">None</button>
+                <button class="choice" type="button" data-option="kevlar" data-value="1layer" aria-pressed="false">1 Layer <span class="price-note">+$75</span></button>
+                <button class="choice" type="button" data-option="kevlar" data-value="2layers" aria-pressed="false">2 Layers <span class="price-note">+$150</span></button>
+                <button class="choice" type="button" data-option="kevlar" data-value="3layers" aria-pressed="false">3 Layers <span class="price-note">+$225</span></button>
+                <button class="choice" type="button" data-option="kevlar" data-value="4layers" aria-pressed="false">4 Layers <span class="price-note">+$300</span></button>
+                <button class="choice" type="button" data-option="kevlar" data-value="5layers" aria-pressed="false">5 Layers <span class="price-note">+$375</span></button>
+              </div>
+            </div>
+
+            <div class="option-category">
+              <h3>Side Piping</h3>
+              <div class="choice-row" data-group="piping">
+                <button class="choice is-selected" type="button" data-option="piping" data-value="standard" aria-pressed="true">Standard</button>
+                <button class="choice" type="button" data-option="piping" data-value="white" aria-pressed="false">White</button>
+                <button class="choice" type="button" data-option="piping" data-value="red" aria-pressed="false">Red</button>
+                <button class="choice" type="button" data-option="piping" data-value="blue" aria-pressed="false">Blue</button>
+                <button class="choice" type="button" data-option="piping" data-value="gold" aria-pressed="false">Metallic Gold</button>
+                <button class="choice" type="button" data-option="piping" data-value="yellow" aria-pressed="false">Warm Yellow</button>
+                <button class="choice" type="button" data-option="piping" data-value="lemon" aria-pressed="false">Lemon Yellow</button>
+                <button class="choice" type="button" data-option="piping" data-value="maroon" aria-pressed="false">Maroon</button>
+                <button class="choice" type="button" data-option="piping" data-value="grey" aria-pressed="false">Grey</button>
+                <button class="choice" type="button" data-option="piping" data-value="black" aria-pressed="false">Black</button>
+              </div>
+            </div>
+
+            <div class="option-category">
+              <h3>Reversible</h3>
+              <div class="choice-row" data-group="reversible">
+                <button class="choice is-selected" type="button" data-option="reversible" data-value="no" aria-pressed="true">No</button>
+                <button class="choice" type="button" data-option="reversible" data-value="yes" aria-pressed="false">Yes</button>
+              </div>
+            </div>
+
+            <div class="option-category">
+              <h3>Add-Ons</h3>
+              <div class="choice-row" data-group="addons">
+                <button class="choice" type="button" data-option="extraPocket" data-value="true" aria-pressed="false">Extra Inside Zip Pocket <span class="price-note">+$15</span></button>
+                <button class="choice" type="button" data-option="hiddenStash" data-value="true" aria-pressed="false">Hidden Stash Pocket <span class="price-note">+$15</span></button>
+                <button class="choice" type="button" data-option="gunPocket" data-value="true" aria-pressed="false">Gun Pocket <span class="price-note">+$30</span></button>
+                <button class="choice" type="button" data-option="zipperExtension" data-value="true" aria-pressed="false">Zipper Extension Sides <span class="price-note">+$100</span></button>
+                <button class="choice" type="button" data-option="heatedLiner" data-value="true" aria-pressed="false">Heated Liner <span class="price-note">+$175</span></button>
+                <button class="choice" type="button" data-option="customPrintedLiner" data-value="true" aria-pressed="false">Custom Printed Liner <span class="price-note">+$100</span></button>
+                <button class="choice" type="button" data-option="zipperAccess" data-value="true" aria-pressed="false">Zipper Access Liner <span class="price-note">+$50</span></button>
+                <button class="choice" type="button" data-option="fullZipLiner" data-value="true" aria-pressed="false">Full Zip Out Lining <span class="price-note">+$75</span></button>
+                <button class="choice" type="button" data-option="customFit" data-value="true" aria-pressed="false">Custom Fit Alteration <span class="price-note">+$150</span></button>
               </div>
             </div>
 
