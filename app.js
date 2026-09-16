@@ -110,6 +110,78 @@ const LABELS = {
   },
 };
 
+// ── Image map ─────────────────────────────────────────────────────────────────────
+// Key format: {style}_{gender}_{leather}.png — e.g. australian_male_black.png
+// Fallback chain: specific → generic → main_vest.png
+const IMAGE_MAP = {
+  // Australian style — main product
+  australian_male_black:    'australian_male_black.png',
+  australian_male_brown:    'australian_male_brown.png',
+  australian_male_tan:      'australian_male_tan.png',
+  australian_male_burgundy: 'australian_male_burgundy.png',
+  australian_female_black:   'australian_female_black.png',
+  australian_female_brown:  'australian_female_brown.png',
+  // NZ style
+  nz_male_black:    'nz_male_black.png',
+  nz_male_brown:    'nz_male_brown.png',
+  nz_female_black:   'nz_female_black.png',
+  // American style
+  american_male_black:  'american_male_black.png',
+  american_male_brown:  'american_male_brown.png',
+  american_female_black: 'american_female_black.png',
+  // Euro style
+  euro_male_black:   'euro_male_black.png',
+  euro_male_brown:   'euro_male_brown.png',
+  euro_female_black: 'euro_female_black.png',
+  // Tactical style
+  tactical_male_black:  'tactical_male_black.png',
+  tactical_male_olive:   'tactical_male_olive.png',
+  tactical_female_black: 'tactical_female_black.png',
+  // SWAT style
+  swat_male_black:   'swat_male_black.png',
+  swat_male_odgreen: 'swat_male_odgreen.png',
+  swat_female_black: 'swat_female_black.png',
+};
+
+function getPreviewImage() {
+  const style   = STATE.vestStyle;
+  const gender  = STATE.gender;
+  const leather = STATE.leather;
+  // Try exact match first
+  const key = `${style}_${gender}_${leather}`;
+  const asset = IMAGE_MAP[key];
+  if (asset) return `assets/${asset}`;
+  // Try same style, any gender, black
+  if (IMAGE_MAP[`${style}_${gender}_black`]) return `assets/${style}_${gender}_black.png`;
+  if (IMAGE_MAP[`${style}_male_black`])      return `assets/${style}_male_black.png`;
+  // Try style without gender
+  if (IMAGE_MAP[`${style}_black`])           return `assets/${style}_black.png`;
+  // Fallback: main vest (current state)
+  return `assets/main_vest.png`;
+}
+
+function updatePreviewImage() {
+  const src = getPreviewImage();
+  // Builder preview
+  const preview = document.getElementById('vestPreview');
+  if (preview && !preview.src.endsWith(src)) {
+    preview.style.opacity = '0';
+    setTimeout(() => { preview.src = src; preview.style.opacity = '1'; }, 150);
+  }
+  // Hero image
+  const hero = document.getElementById('heroVestImg');
+  if (hero && !hero.src.endsWith(src)) {
+    hero.style.opacity = '0';
+    setTimeout(() => { hero.src = src; hero.style.opacity = '1'; }, 150);
+  }
+  // Gallery main image
+  const gallery = document.getElementById('galleryMain');
+  if (gallery && !gallery.src.endsWith(src)) {
+    gallery.style.opacity = '0';
+    setTimeout(() => { gallery.src = src; gallery.style.opacity = '1'; }, 150);
+  }
+}
+
 // ── Style base prices ─────────────────────────────────────────────────────────────
 // Original: NZ/AUS $1025, Euro/US $1000, Tactical $1199 → all reduced by $200
 const STYLE_BASE_PRICES = {
@@ -291,6 +363,7 @@ function selectChoice(row, btn, group) {
 
   if (group === 'leather') {
     updateVestColor(btn.dataset.value);
+    updatePreviewImage();
   }
 
   // Style switching: when style changes, update cut/closure/collar to defaults
@@ -300,6 +373,11 @@ function selectChoice(row, btn, group) {
     document.querySelectorAll('.style-desc').forEach(el => {
       el.classList.toggle('style-desc--active', el.dataset.style === btn.dataset.value);
     });
+    updatePreviewImage();
+  }
+
+  if (group === 'gender') {
+    updatePreviewImage();
   }
 
   if (group === 'patch') {
