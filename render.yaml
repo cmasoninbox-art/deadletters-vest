@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: deadletters-vest
+    env: static
+    buildCommand: ""
+    staticPublishPath: .
+    headers:
+      - path: "/*"
+        name: "Cache-Control"
+        value: "max-age=0, must-revalidate"

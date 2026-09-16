@@ -1,0 +1,20 @@
+{
+  "name": "aus-vests",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://cmasoninbox-art:ghp_ZN3wT0Hq5xl9t3LqQx2fWZvJY9R6Km7pS8@github.com/cmasoninbox-art/deadletters-vest.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cmasoninbox-art/deadletters-vest/issues"
+  },
+  "homepage": "https://github.com/cmasoninbox-art/deadletters-vest#readme"
+}
