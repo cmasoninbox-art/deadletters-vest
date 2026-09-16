@@ -42,7 +42,10 @@ const LABELS = {
   closure: {
     bolo: 'Bolo + Braided Sides',
     zip: 'Heavy Zip',
-    buckle: 'Buckle',
+    zipper: 'Centre Zipper',
+    buttonsnaps: 'Button + Snaps',
+    buckles: 'Utility Buckles',
+    velcro: 'Velcro Front',
     snap: 'Snaps',
   },
   collar: {
@@ -107,6 +110,17 @@ const LABELS = {
   },
 };
 
+// ── Style base prices ─────────────────────────────────────────────────────────────
+// Original: NZ/AUS $1025, Euro/US $1000, Tactical $1199 → all reduced by $200
+const STYLE_BASE_PRICES = {
+  australian: 825,
+  nz:         825,
+  american:   800,
+  euro:       800,
+  tactical:   999,
+  swat:       800,
+};
+
 // ── Price modifiers ───────────────────────────────────────────────────────────
 
 const PRICES = {
@@ -139,13 +153,19 @@ const PRICES = {
   closure: {
     bolo: 0,
     zip: 0,
-    buckle: 55,
+    zipper: 0,
+    buttonsnaps: 45,
+    buckles: 55,
+    velcro: 0,
     snap: 25,
   },
   collar: {
     widev: 0,
     v: 0,
+    vneck: 0,
+    standard: 0,
     stand: 0,
+    round: 0,
     notch: 0,
     none: 0,
   },
@@ -295,8 +315,11 @@ function selectChoice(row, btn, group) {
 function applyStyleDefaults(style) {
   const presets = {
     australian: { cut: 'tom', closure: 'bolo', collar: 'widev' },
-    nz: { cut: 'tom', closure: 'bolo', collar: 'widev' },
-    american: { cut: 'classic', closure: 'zip', collar: 'v' },
+    nz:         { cut: 'standard', closure: 'bolo', collar: 'vneck' },
+    american:   { cut: 'standard', closure: 'buttonsnaps', collar: 'standard' },
+    euro:       { cut: 'standard', closure: 'zipper', collar: 'standard' },
+    tactical:   { cut: 'standard', closure: 'buckles', collar: 'round' },
+    swat:       { cut: 'standard', closure: 'velcro', collar: 'standard' },
   };
   const preset = presets[style] || presets.australian;
 
@@ -360,7 +383,7 @@ function updateVestColor(color) {
 // ── Pricing ───────────────────────────────────────────────────────────────────
 
 function updatePrice() {
-  let price = BASE_PRICE;
+  let price = STYLE_BASE_PRICES[STATE.vestStyle] ?? BASE_PRICE;
   price += PRICES.kevlar[STATE.kevlar] || 0;
   price += PRICES.linerType[STATE.linerType] || 0;
   price += PRICES.reversible[STATE.reversible] || 0;
@@ -393,7 +416,7 @@ function updatePrice() {
 function buildSummary() {
   const parts = [];
   parts.push(`<strong>DEAD LETTERS Custom Vest</strong>`);
-  const styleLabels = { australian: 'Australian', nz: 'NZ Style', american: 'American' };
+  const styleLabels = { australian: 'Australian', nz: 'NZ Style', american: 'American', euro: 'Euro', tactical: 'Tactical', swat: 'SWAT' };
   parts.push(`Style: ${styleLabels[STATE.vestStyle] || 'Australian'}`);
   parts.push(`Gender: ${LABELS.gender[STATE.gender]}`);
   parts.push(`Leather: ${LABELS.leather[STATE.leather]}`);
