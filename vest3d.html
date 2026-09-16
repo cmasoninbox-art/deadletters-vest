@@ -336,7 +336,7 @@ scene.fog = new THREE.FogExp2(0x0a0a0a, 0.3);
 const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.01, 50);
 camera.position.set(0, 0.1, 4.8);
 
-const controls = new OrbitControls(camera, canvas);
+const controls = new THREE.OrbitControls(camera, canvas);
 controls.enableDamping = true;
 controls.dampingFactor = 0.07;
 controls.minDistance = 2.5;
