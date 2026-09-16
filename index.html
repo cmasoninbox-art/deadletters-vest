@@ -213,6 +213,17 @@
                 <button class="choice" type="button" data-option="vestStyle" data-value="nz" aria-pressed="false">NZ Style</button>
                 <button class="choice" type="button" data-option="vestStyle" data-value="american" aria-pressed="false">American</button>
               </div>
+              <div class="style-descriptions">
+                <div class="style-desc style-desc--active" data-style="australian">
+                  <strong>Australian / TOM Style</strong> — 2 big front pockets + 1 back pocket + neck strap. Diagonal cut, braided edges, bolo cord. Can do competition cut.
+                </div>
+                <div class="style-desc" data-style="nz">
+                  <strong>NZ Style</strong> — Same as Australian with NZ-specific sizing and proportions. 2 front pockets + 1 back pocket + neck strap.
+                </div>
+                <div class="style-desc" data-style="american">
+                  <strong>American Style</strong> — Side slits in side panels, button placket up the front, removable back embroidery backing. Longer cut.
+                </div>
+              </div>
             </div>
 
             <div class="option-category" id="cut-section">
@@ -344,20 +355,29 @@
                 <button class="choice is-selected" type="button" data-option="patch" data-value="none" aria-pressed="true">None</button>
                 <button class="choice" type="button" data-option="patch" data-value="eagle" aria-pressed="false">Eagle <span class="price-note">+$55</span></button>
                 <button class="choice" type="button" data-option="patch" data-value="cross" aria-pressed="false">Skull & Cross <span class="price-note">+$55</span></button>
-                <button class="choice" type="button" data-option="patch" data-value="custom" aria-pressed="false">Custom <span class="price-note">+$75</span></button>
+                <button class="choice" type="button" data-option="patch" data-value="custom" aria-pressed="false">Custom Text <span class="price-note">+$75</span></button>
               </div>
-              <label class="custom-text-label" for="patchText">
-                <span>Custom text (max 14 chars)</span>
-                <input id="patchText" maxlength="14" placeholder="E.g. HELLRAISER" value="">
+              <div id="patchPreview" class="patch-preview-box" style="display:none; margin-top:1rem;">
+                <svg viewBox="0 0 200 80" fill="none">
+                  <ellipse cx="100" cy="40" rx="95" ry="38" fill="#1a1a1a" stroke="#c8b89a" stroke-width="2"/>
+                  <text id="patchText1" x="100" y="35" text-anchor="middle" font-family="'UnifrakturMaguntia',serif" font-size="16" fill="#f5f0e6">YOUR TEXT</text>
+                  <text id="patchText2" x="100" y="55" text-anchor="middle" font-family="'UnifrakturMaguntia',serif" font-size="12" fill="#f5f0e6"></text>
+                </svg>
+              </div>
+              <label class="custom-text-label" for="patchTextInput">
+                <span>Custom patch text (max 14 chars)</span>
+                <input id="patchTextInput" maxlength="14" placeholder="E.g. HELLRAISER">
               </label>
             </div>
 
             <div class="option-category">
               <h3>Your Measurements</h3>
               <div class="measurement-row">
-                <label><span>Chest (in)</span><input type="number" id="measChest" placeholder="46"></label>
-                <label><span>Waist (in)</span><input type="number" id="measWaist" placeholder="42"></label>
-                <label><span>Length (in)</span><input type="number" id="measLength" placeholder="26"></label>
+                <label><span>Chest (in)</span><input type="number" class="measurement-input" data-field="chest" placeholder="46"></label>
+                <label><span>Waist (in)</span><input type="number" class="measurement-input" data-field="stomach" placeholder="42"></label>
+                <label><span>Length (in)</span><input type="number" class="measurement-input" data-field="length" placeholder="26"></label>
+                <label><span>Shoulder Width</span><input type="number" class="measurement-input" data-field="shoulderWidth" placeholder="18"></label>
+                <label><span>Neck (in)</span><input type="number" class="measurement-input" data-field="neck" placeholder="16"></label>
               </div>
             </div>
 
@@ -381,7 +401,7 @@
           <h2>Own the<br><em>Back</em></h2>
           <p class="section-copy">Every patch is hand-printed or embroidered. Choose from our library or submit your own design.</p>
         </div>
-        <div class="patches-grid">
+        <div class="patches-grid" id="patchesGrid">
           <div class="patch-card">
             <div class="patch-preview" style="background:#f5f0e6;">
               <svg viewBox="0 0 120 100" fill="none">
@@ -635,5 +655,37 @@
   </footer>
 
   <script src="app.js"></script>
+  <script>
+    // Wire patch cards in showcase to builder selection
+    document.querySelectorAll('.patch-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const type = card.dataset.patchType;
+        if (!type) return;
+        const btn = document.querySelector(`[data-group="patch"] [data-value="${type}"]`);
+        if (btn) {
+          btn.click();
+          // Scroll to builder
+          document.getElementById('build').scrollIntoView({ behavior: 'smooth' });
+        }
+        // Highlight card
+        document.querySelectorAll('.patch-card').forEach(c => c.classList.remove('is-selected'));
+        card.classList.add('is-selected');
+      });
+      // Mark cards with data-patch-type for JS lookup
+    });
+    // Tag patch cards with their types
+    const cardTypes = ['none', 'eagle', 'cross', 'custom'];
+    document.querySelectorAll('.patch-card').forEach((card, i) => {
+      card.dataset.patchType = cardTypes[i] || 'none';
+    });
+    // Tag each patch card
+    (function(){
+      const cards = document.querySelectorAll('.patch-card');
+      if (cards[0]) cards[0].dataset.patchType = 'none';
+      if (cards[1]) cards[1].dataset.patchType = 'eagle';
+      if (cards[2]) cards[2].dataset.patchType = 'cross';
+      if (cards[3]) cards[3].dataset.patchType = 'custom';
+    })();
+  </script>
 </body>
 </html>

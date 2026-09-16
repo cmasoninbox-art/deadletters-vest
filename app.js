@@ -161,6 +161,17 @@ const PRICES = {
   vNeck: 0,
   dutchCurvedBack: 0,
   fatstrap: 0,
+  patch: {
+    none: 0,
+    eagle: 55,
+    cross: 55,
+    custom: 75,
+  },
+  braid: {
+    none: 0,
+    single: 65,
+    double: 120,
+  },
 };
 
 // ── State ─────────────────────────────────────────────────────────────────────
@@ -236,6 +247,14 @@ function init() {
     });
   });
 
+  const patchTextInput = document.getElementById('patchTextInput');
+  if (patchTextInput) {
+    patchTextInput.addEventListener('input', e => {
+      STATE.patchText = e.target.value.toUpperCase();
+      updatePatchPreview(STATE.patch || 'none');
+    });
+  }
+
   updatePrice();
 }
 
@@ -257,8 +276,18 @@ function selectChoice(row, btn, group) {
   // Style switching: when style changes, update cut/closure/collar to defaults
   if (group === 'vestStyle') {
     applyStyleDefaults(btn.dataset.value);
+    // Update style description cards
+    document.querySelectorAll('.style-desc').forEach(el => {
+      el.classList.toggle('style-desc--active', el.dataset.style === btn.dataset.value);
+    });
   }
 
+  if (group === 'patch') {
+    STATE.patch = btn.dataset.value;
+    updatePatchPreview(btn.dataset.value);
+  }
+
+  updateBuildStatus();
   updatePrice();
 }
 
@@ -287,6 +316,20 @@ function applyStyleDefaults(style) {
       });
     }
   });
+}
+
+// ── Patch preview ───────────────────────────────────────────────────────────────
+
+function updatePatchPreview(type) {
+  const container = document.getElementById('patchPreview');
+  if (!container) return;
+  const t = { none: { line1: '', line2: '' }, eagle: { line1: '★ DEAD LETTERS ★', line2: 'HELLRAISER VEST CO.' }, cross: { line1: 'DEAD', line2: 'LETTERS' }, custom: { line1: STATE.patchText || 'YOUR TEXT', line2: '' } }[type] || { line1: '', line2: '' };
+  const svgEl = container.querySelector('svg');
+  if (svgEl) {
+    const texts = svgEl.querySelectorAll('text');
+    if (texts.length >= 2) { texts[0].textContent = t.line1; texts[1].textContent = t.line2; }
+  }
+  container.style.display = type === 'none' ? 'none' : '';
 }
 
 function updateVestColor(color) {
@@ -324,6 +367,8 @@ function updatePrice() {
   price += PRICES.cut[STATE.cut] || 0;
   price += PRICES.closure[STATE.closure] || 0;
   price += PRICES.collar[STATE.collar] || 0;
+  price += PRICES.patch[STATE.patch] || 0;
+  price += PRICES.braid[STATE.braid] || 0;
   if (STATE.extraPocket) price += PRICES.extraPocket;
   if (STATE.hiddenStash) price += PRICES.hiddenStash;
   if (STATE.gunPocket) price += PRICES.gunPocket;
@@ -427,5 +472,16 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// ── Expose vestScene for color updates ────────────────────────────────────────
-window.vestScene = null;
+// ── Build status bar ─────────────────────────────────────────────────────────
+function updateBuildStatus() {
+  const el = document.getElementById('buildStatus');
+  if (!el) return;
+  const styleLabel = { australian: 'AUS', nz: 'NZ', american: 'AMER' };
+  const cutLabel = { tom: 'TOM', classic: 'Classic', competition: 'Comp', long: 'Long' };
+  const parts = [
+    styleLabel[STATE.vestStyle] || 'AUS',
+    LABELS.leather[STATE.leather].split(' ')[0],
+    LABELS.closure[STATE.closure].split(' ')[0],
+  ];
+  el.textContent = parts.join(' · ');
+}
