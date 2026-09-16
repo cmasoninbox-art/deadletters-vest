@@ -207,30 +207,42 @@
             </div>
 
             <div class="option-category">
-              <h3>Cut</h3>
-              <div class="choice-row" data-group="cut">
-                <button class="choice is-selected" type="button" data-option="cut" data-value="classic" aria-pressed="true">Classic</button>
-                <button class="choice" type="button" data-option="cut" data-value="long" aria-pressed="false">Long <span class="price-note">+$80</span></button>
-                <button class="choice" type="button" data-option="cut" data-value="cutoff" aria-pressed="false">Cutoff <span class="price-note">-$30</span></button>
+              <h3>Style</h3>
+              <div class="choice-row" data-group="vestStyle">
+                <button class="choice is-selected" type="button" data-option="vestStyle" data-value="australian" aria-pressed="true">Australian</button>
+                <button class="choice" type="button" data-option="vestStyle" data-value="nz" aria-pressed="false">NZ Style</button>
+                <button class="choice" type="button" data-option="vestStyle" data-value="american" aria-pressed="false">American</button>
               </div>
             </div>
 
-            <div class="option-category">
+            <div class="option-category" id="cut-section">
+              <h3>Cut</h3>
+              <div class="choice-row" data-group="cut">
+                <button class="choice is-selected" type="button" data-option="cut" data-value="tom" aria-pressed="true">TOM (Short/Braid)</button>
+                <button class="choice" type="button" data-option="cut" data-value="classic" aria-pressed="false">Classic</button>
+                <button class="choice" type="button" data-option="cut" data-value="competition" aria-pressed="false">Competition <span class="price-note">+$50</span></button>
+                <button class="choice" type="button" data-option="cut" data-value="long" aria-pressed="false">Long <span class="price-note">+$80</span></button>
+              </div>
+            </div>
+
+            <div class="option-category" id="closure-section">
               <h3>Front Closure</h3>
               <div class="choice-row" data-group="closure">
-                <button class="choice is-selected" type="button" data-option="closure" data-value="zip" aria-pressed="true">Heavy Zip</button>
-                <button class="choice" type="button" data-option="closure" data-value="bolo" aria-pressed="false">Bolo <span class="price-note">+$35</span></button>
+                <button class="choice is-selected" type="button" data-option="closure" data-value="bolo" aria-pressed="true">Bolo + Braided Sides</button>
+                <button class="choice" type="button" data-option="closure" data-value="zip" aria-pressed="false">Heavy Zip</button>
                 <button class="choice" type="button" data-option="closure" data-value="buckle" aria-pressed="false">Buckle <span class="price-note">+$55</span></button>
                 <button class="choice" type="button" data-option="closure" data-value="snap" aria-pressed="false">Snaps <span class="price-note">+$25</span></button>
               </div>
             </div>
 
-            <div class="option-category">
+            <div class="option-category" id="collar-section">
               <h3>Collar</h3>
               <div class="choice-row" data-group="collar">
-                <button class="choice is-selected" type="button" data-option="collar" data-value="v" aria-pressed="true">V-Neck</button>
+                <button class="choice is-selected" type="button" data-option="collar" data-value="widev" aria-pressed="true">Wide V</button>
+                <button class="choice" type="button" data-option="collar" data-value="v" aria-pressed="false">V-Neck</button>
                 <button class="choice" type="button" data-option="collar" data-value="stand" aria-pressed="false">Stand-Up</button>
                 <button class="choice" type="button" data-option="collar" data-value="notch" aria-pressed="false">Notch</button>
+                <button class="choice" type="button" data-option="collar" data-value="none" aria-pressed="false">None</button>
               </div>
             </div>
 

@@ -33,6 +33,25 @@ const LABELS = {
     orange: 'Orange',
     grey: 'Grey',
   },
+  cut: {
+    tom: 'TOM (Short/Braid)',
+    classic: 'Classic',
+    competition: 'Competition',
+    long: 'Long',
+  },
+  closure: {
+    bolo: 'Bolo + Braided Sides',
+    zip: 'Heavy Zip',
+    buckle: 'Buckle',
+    snap: 'Snaps',
+  },
+  collar: {
+    widev: 'Wide V',
+    v: 'V-Neck',
+    stand: 'Stand-Up',
+    notch: 'Notch',
+    none: 'None',
+  },
   liner: {
     standard: 'Standard Mesh',
     black: 'Black',
@@ -111,6 +130,25 @@ const PRICES = {
     diamond: 80,
   },
   reversible: { no: 0, yes: 75 },
+  cut: {
+    tom: 0,
+    classic: 0,
+    competition: 50,
+    long: 80,
+  },
+  closure: {
+    bolo: 0,
+    zip: 0,
+    buckle: 55,
+    snap: 25,
+  },
+  collar: {
+    widev: 0,
+    v: 0,
+    stand: 0,
+    notch: 0,
+    none: 0,
+  },
   extraPocket: 15,
   hiddenStash: 15,
   gunPocket: 30,
@@ -128,8 +166,12 @@ const PRICES = {
 // ── State ─────────────────────────────────────────────────────────────────────
 
 const STATE = {
+  vestStyle: 'australian',
   gender: 'male',
   leather: 'black',
+  cut: 'tom',
+  closure: 'bolo',
+  collar: 'widev',
   stitch: 'matching',
   liner: 'standard',
   linerType: 'standard',
@@ -211,7 +253,40 @@ function selectChoice(row, btn, group) {
   if (group === 'leather') {
     updateVestColor(btn.dataset.value);
   }
+
+  // Style switching: when style changes, update cut/closure/collar to defaults
+  if (group === 'vestStyle') {
+    applyStyleDefaults(btn.dataset.value);
+  }
+
   updatePrice();
+}
+
+// Apply default cut/closure/collar based on selected style
+function applyStyleDefaults(style) {
+  const presets = {
+    australian: { cut: 'tom', closure: 'bolo', collar: 'widev' },
+    nz: { cut: 'tom', closure: 'bolo', collar: 'widev' },
+    american: { cut: 'classic', closure: 'zip', collar: 'v' },
+  };
+  const preset = presets[style] || presets.australian;
+
+  // Update each option group without triggering recursion
+  Object.entries(preset).forEach(([key, value]) => {
+    STATE[key] = value;
+    // Re-render the button states
+    const row = document.querySelector(`[data-group="${key}"]`);
+    if (row) {
+      row.querySelectorAll('.choice').forEach(b => {
+        b.classList.remove('is-selected');
+        b.setAttribute('aria-pressed', 'false');
+        if (b.dataset.value === value) {
+          b.classList.add('is-selected');
+          b.setAttribute('aria-pressed', 'true');
+        }
+      });
+    }
+  });
 }
 
 function updateVestColor(color) {
@@ -246,6 +321,9 @@ function updatePrice() {
   price += PRICES.kevlar[STATE.kevlar] || 0;
   price += PRICES.linerType[STATE.linerType] || 0;
   price += PRICES.reversible[STATE.reversible] || 0;
+  price += PRICES.cut[STATE.cut] || 0;
+  price += PRICES.closure[STATE.closure] || 0;
+  price += PRICES.collar[STATE.collar] || 0;
   if (STATE.extraPocket) price += PRICES.extraPocket;
   if (STATE.hiddenStash) price += PRICES.hiddenStash;
   if (STATE.gunPocket) price += PRICES.gunPocket;
@@ -270,11 +348,13 @@ function updatePrice() {
 function buildSummary() {
   const parts = [];
   parts.push(`<strong>DEAD LETTERS Custom Vest</strong>`);
+  const styleLabels = { australian: 'Australian', nz: 'NZ Style', american: 'American' };
+  parts.push(`Style: ${styleLabels[STATE.vestStyle] || 'Australian'}`);
   parts.push(`Gender: ${LABELS.gender[STATE.gender]}`);
   parts.push(`Leather: ${LABELS.leather[STATE.leather]}`);
-
-  const cutLabel = STATE.cut === 'classic' ? 'Classic Cut' : 'Competition Cut';
-  parts.push(`Cut: ${cutLabel}`);
+  parts.push(`Cut: ${LABELS.cut[STATE.cut]}`);
+  parts.push(`Closure: ${LABELS.closure[STATE.closure]}`);
+  parts.push(`Collar: ${LABELS.collar[STATE.collar]}`);
 
   if (STATE.kevlar !== 'none') {
     parts.push(`Kevlar: ${LABELS.kevlar[STATE.kevlar]}`);
